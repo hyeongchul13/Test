@@ -35,15 +35,16 @@ public class UserController {
         userService.signup(requestDto);
         return ResponseEntity.ok().body(new SuccessResponse("회원 가입 완료"));
     }
+
     // 프로필 수정
     @PutMapping("/profile")
-    public ResponseEntity<BaseResponse> updateProfile(Long id, @RequestBody @Valid ProfileRequestDto profileRequestDto, BindingResult bindingResult,
+    public ResponseEntity<BaseResponse> updateProfile(@RequestBody @Valid ProfileRequestDto profileRequestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkParamValidation(bindingResult);
-        ProfileResponseDto profileResponseDto = userService.updateProfile(id, profileRequestDto, userDetails.getUser());
-        return ResponseEntity.ok().body(new SuccessResponse("프로필 수정 완료", profileResponseDto));
-
+        userService.updateProfile(profileRequestDto, userDetails.getUser());
+        return ResponseEntity.ok().body(new SuccessResponse("프로필 수정 완료"));
     }
+
     private static void checkParamValidation(BindingResult bindingResult) {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
         for (FieldError e : fieldErrors) {

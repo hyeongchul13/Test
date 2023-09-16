@@ -71,20 +71,9 @@ public class UserService {
 
     // 프로필 수정
     @Transactional
-    public ProfileResponseDto updateProfile(Long id, ProfileRequestDto profileRequestDto, User user) {
-        User findUser = findUser(id);
-
-        // 수정하려는 user의 권한이 ADMIN 이거나 user가 게시글의 작성자 일 경우.
-        if (user.getRole().equals(ADMIN) || findUser.equals(user.getUsername())) {
-            findUser.updateprofile(profileRequestDto);
-            return new ProfileResponseDto(findUser);
-        }
-        throw new IllegalArgumentException("작성자만 수정이 가능합니다.");
+    public void updateProfile(ProfileRequestDto profileRequestDto, User user) {
+        user.updateprofile(profileRequestDto);
+        userRepository.save(user);
     }
 
-    private User findUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> {
-            throw new IllegalArgumentException("해당 id의 게시물이 존재하지 않습니다. User ID: " + id);
-        });
-    }
 }
