@@ -1,6 +1,6 @@
 package com.sparta.first_project.service;
 
-import com.sparta.first_project.dto.SignupRequestDto;
+import com.sparta.first_project.dto.*;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 
 
 @Service
@@ -25,6 +27,7 @@ public class UserService {
     // 관리자 인증 토큰
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
+    // 회원가입
     @Transactional
     public void signup(SignupRequestDto requestDto) {
 
@@ -66,4 +69,22 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // 프로필 수정
+    @Transactional
+    public ProfileResponseDto updateProfile(Long id, ProfileRequestDto profileRequestDto, User user) {
+        User findUser = findUser(id);
+
+        // 수정하려는 user의 권한이 ADMIN 이거나 user가 게시글의 작성자 일 경우.
+        if (user.getRole().equals(ADMIN) || findUser.equals(user.getUsername())) {
+            findUser.updateprofile(profileRequestDto);
+            return new ProfileResponseDto(findUser);
+        }
+        throw new IllegalArgumentException("작성자만 수정이 가능합니다.");
+    }
+
+    private User findUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> {
+            throw new IllegalArgumentException("해당 id의 게시물이 존재하지 않습니다. User ID: " + id);
+        });
+    }
 }

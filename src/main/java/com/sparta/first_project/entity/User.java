@@ -1,5 +1,6 @@
 package com.sparta.first_project.entity;
 
+import com.sparta.first_project.dto.ProfileRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,5 +36,12 @@ public class User {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+    public void updateprofile(ProfileRequestDto profileRequestDto) {
+        this.password = profileRequestDto.getPassword();
+        this.email = profileRequestDto.getEmail();
+        this.nickname = profileRequestDto.getNickname();
+        this.intro = profileRequestDto.getIntro();
+    }
 
 }
