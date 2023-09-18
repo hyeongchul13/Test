@@ -3,13 +3,17 @@ package com.sparta.first_project.service;
 import com.sparta.first_project.dto.CommentRequestDto;
 import com.sparta.first_project.dto.CommentResponseDto;
 import com.sparta.first_project.entity.Comment;
+import com.sparta.first_project.entity.Likes;
 import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.repository.CommentRepository;
+import com.sparta.first_project.repository.LikesRepository;
 import com.sparta.first_project.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static com.sparta.first_project.entity.UserRoleEnum.*;
 
@@ -20,6 +24,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final LikesRepository likesRepository;
 
     @Transactional
     public CommentResponseDto createComment(Long postId, CommentRequestDto requestDto, User user) {
@@ -62,6 +67,26 @@ public class CommentService {
             return id;
         }
         throw new IllegalArgumentException("작성자만 삭제가 가능합니다.");
+    }
+
+    @Transactional
+    public String likeCommentToggle(Long id, User user) {
+        Comment findComment = findComment(id);
+        Optional<Likes> findLikes = likesRepository.findByCommentAndUser(findComment, user);
+
+        String responseMessage = "";
+
+        // 이미 유저가 해당 게시물을 좋아요 했을 경우
+        if (findLikes.isPresent()) {
+            likesRepository.delete(findLikes.get());
+            responseMessage = "좋아요 취소 성공";
+            return responseMessage;
+        }
+        // 유저가 해당 게시물을 좋아요 하지 않았을 경우
+        Likes likes = new Likes(findComment, user);
+        likesRepository.save(likes);
+        responseMessage = "좋아요 성공";
+        return responseMessage;
     }
 
     private Comment findComment(Long id) {

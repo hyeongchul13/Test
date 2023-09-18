@@ -5,6 +5,9 @@ import com.sparta.first_project.dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Builder
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
@@ -27,6 +30,9 @@ public class Comment extends Timestamp {
     @JsonIgnore
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @OneToMany(mappedBy = "comment")
+    private List<Likes> likesList = new ArrayList<>();
 
     public Comment(CommentRequestDto requestDto) {
         this.content = requestDto.getContent();

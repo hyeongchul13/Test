@@ -20,12 +20,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts")
+@RequestMapping("/api/comment")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/{id}/comment")
+    @PostMapping("/{id}")
     public ResponseEntity<BaseResponse> createComment(@PathVariable Long id,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -36,7 +36,7 @@ public class CommentController {
                         commentService.createComment(id, requestDto, userDetails.getUser())));
     }
 
-    @PutMapping("/comment/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<BaseResponse> updateComment(@PathVariable Long id,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal
@@ -48,13 +48,22 @@ public class CommentController {
                         commentService.updateComment(id, requestDto, userDetails.getUser())));
     }
 
-    @DeleteMapping("/comment/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteComment(@PathVariable Long id,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         commentService.deleteComment(id, userDetails.getUser());
 
         return ResponseEntity.ok()
                 .body(new SuccessResponse("댓글 삭제 성공 + Comment Id: " + id));
+    }
+
+    // 댓글 좋아요
+    @PostMapping("/{id}/likes")
+    public ResponseEntity<BaseResponse> likeComment(@PathVariable Long id,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String responseMessage = commentService.likeCommentToggle(id, userDetails.getUser());
+        return ResponseEntity.ok().body(new SuccessResponse(
+                responseMessage + " 댓글 id: " + id + " 유저 id: " + userDetails.getUser().getId()));
     }
 
     private static void checkParamValidation(BindingResult bindingResult) {
