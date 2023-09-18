@@ -7,6 +7,7 @@ import com.sparta.first_project.error.ParameterValidationException;
 import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,10 @@ public class CommentController {
                         commentService.createComment(id, requestDto, userDetails.getUser())));
     }
 
-    @Operation(summary = "댓글 수정")
+    @Operation(summary = "댓글 수정",
+    responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")}
+    )
     @PutMapping("/comment/{id}")
     public ResponseEntity<BaseResponse> updateComment(@PathVariable Long id,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
@@ -51,7 +55,9 @@ public class CommentController {
                         commentService.updateComment(id, requestDto, userDetails.getUser())));
     }
 
-    @Operation(summary = "댓글 삭제")
+    @Operation(summary = "댓글 삭제"
+    ,responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @DeleteMapping("/comment/{id}")
     public ResponseEntity<BaseResponse> deleteComment(@PathVariable Long id,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {

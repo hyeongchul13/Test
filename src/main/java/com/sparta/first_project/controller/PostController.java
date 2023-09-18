@@ -8,6 +8,7 @@ import com.sparta.first_project.error.ParameterValidationException;
 import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,10 @@ public class PostController {
 
     private final PostService postService;
 
-
-
-
     // 전체 조회
-    @Operation(summary = "게시물 전체 조회")
+    @Operation(summary = "게시물 전체 조회",
+            responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @GetMapping("/post")
     public ResponseEntity<BaseResponse> findAllPosts() {
 
@@ -40,7 +40,9 @@ public class PostController {
     }
 
     // 단일 조회
-    @Operation(summary = "게시물 단일 조회")
+    @Operation(summary = "게시물 단일 조회",
+            responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @GetMapping("post/{id}")
     public ResponseEntity<BaseResponse> findPostById(@PathVariable Long id) {
         PostResponseDto postResponseDto = postService.findPostById(id);
@@ -49,7 +51,9 @@ public class PostController {
     }
 
     // 생성
-    @Operation(summary = "게시물 생성")
+    @Operation(summary = "게시물 생성",
+        responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PostMapping("/post")
     public ResponseEntity<BaseResponse> createPost(
             @RequestBody @Valid PostRequestDto postRequestDto,
@@ -64,7 +68,9 @@ public class PostController {
     }
 
     // 수정
-    @Operation(summary = "게시물 수정")
+    @Operation(summary = "게시물 수정",
+            responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PutMapping("post/{id}")
     public ResponseEntity<BaseResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody @Valid PostRequestDto postRequestDto, BindingResult bindingResult,
@@ -77,7 +83,9 @@ public class PostController {
     }
 
     // 삭제
-    @Operation(summary = "게시물 삭제")
+    @Operation(summary = "게시물 삭제",
+            responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deletePost(@PathVariable Long id,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -87,7 +95,9 @@ public class PostController {
     }
 
     // 게시글 좋아요
-    @Operation(summary = "게시물 좋아요")
+    @Operation(summary = "게시물 좋아요",
+            responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PostMapping("post/{id}/likes")
     public ResponseEntity<BaseResponse> likePost(@PathVariable Long id,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
