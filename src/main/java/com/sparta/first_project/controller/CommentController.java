@@ -27,7 +27,9 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @Operation(summary = "댓글 생성")
+    @Operation(summary = "댓글 생성",
+    responses = {
+            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PostMapping("/{id}/comment")
     public ResponseEntity<BaseResponse> createComment(@PathVariable Long id,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
