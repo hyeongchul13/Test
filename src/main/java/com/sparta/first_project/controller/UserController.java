@@ -5,6 +5,7 @@ import com.sparta.first_project.dto.SignupRequestDto;
 import com.sparta.first_project.dto.SuccessResponse;
 import com.sparta.first_project.error.ParameterValidationException;
 import com.sparta.first_project.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(hidden = true)//swagger에서 보이지 않게 설정
     @PostMapping("/sign-up")
     public ResponseEntity<BaseResponse> signup(@RequestBody @Valid SignupRequestDto requestDto,
                                                BindingResult bindingResult) {
