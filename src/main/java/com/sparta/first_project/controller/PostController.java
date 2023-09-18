@@ -7,6 +7,7 @@ import com.sparta.first_project.dto.SuccessResponse;
 import com.sparta.first_project.error.ParameterValidationException;
 import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,11 @@ public class PostController {
 
     private final PostService postService;
 
+
+
+
     // 전체 조회
+    @Operation(summary = "게시물 전체 조회")
     @GetMapping("/post")
     public ResponseEntity<BaseResponse> findAllPosts() {
 
@@ -35,6 +40,7 @@ public class PostController {
     }
 
     // 단일 조회
+    @Operation(summary = "게시물 단일 조회")
     @GetMapping("post/{id}")
     public ResponseEntity<BaseResponse> findPostById(@PathVariable Long id) {
         PostResponseDto postResponseDto = postService.findPostById(id);
@@ -43,6 +49,7 @@ public class PostController {
     }
 
     // 생성
+    @Operation(summary = "게시물 생성")
     @PostMapping("/post")
     public ResponseEntity<BaseResponse> createPost(
             @RequestBody @Valid PostRequestDto postRequestDto,
@@ -57,6 +64,7 @@ public class PostController {
     }
 
     // 수정
+    @Operation(summary = "게시물 수정")
     @PutMapping("post/{id}")
     public ResponseEntity<BaseResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody @Valid PostRequestDto postRequestDto, BindingResult bindingResult,
@@ -69,6 +77,7 @@ public class PostController {
     }
 
     // 삭제
+    @Operation(summary = "게시물 삭제")
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deletePost(@PathVariable Long id,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -78,6 +87,7 @@ public class PostController {
     }
 
     // 게시글 좋아요
+    @Operation(summary = "게시물 좋아요")
     @PostMapping("post/{id}/likes")
     public ResponseEntity<BaseResponse> likePost(@PathVariable Long id,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -85,6 +95,7 @@ public class PostController {
         return ResponseEntity.ok().body(new SuccessResponse(
                 responseMessage + " 게시물 id: " + id + " 유저 id: " + userDetails.getUser().getId()));
     }
+
 
     private static void checkParamValidation(BindingResult bindingResult) {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
