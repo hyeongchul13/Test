@@ -1,30 +1,28 @@
 package com.sparta.first_project.controller;
 
 import com.sparta.first_project.dto.BaseResponse;
-import com.sparta.first_project.dto.ProfileRequestDto;
 import com.sparta.first_project.dto.SignupRequestDto;
 import com.sparta.first_project.dto.SuccessResponse;
 import com.sparta.first_project.error.ParameterValidationException;
-import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -35,12 +33,12 @@ public class UserController {
         return "login";
     }
 
-    @GetMapping("/signup")
-    public String signupPage() {
-        return "signup";
+    @GetMapping("/login-page")
+    public String loginPage() {
+        return "login";
     }
 
-    // 회원가입
+    @Operation(hidden = true)//swagger에서 보이지 않게 설정
     @PostMapping("/signup")
     public ResponseEntity<BaseResponse> signup(@RequestBody @Valid SignupRequestDto requestDto,
                                                BindingResult bindingResult) {
@@ -52,6 +50,7 @@ public class UserController {
         userService.signup(requestDto);
         return ResponseEntity.ok().body(new SuccessResponse("회원 가입 완료"));
     }
+
 
     // 회원 탈퇴
     @DeleteMapping("/withdraw")

@@ -26,6 +26,8 @@ public class JwtUtil {
     // 토큰 만료시간
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
+    private final long RefreshTOKEN_TIME = 7 * 24 * 60 * 60 * 1000L;
+
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
     private Key key;
@@ -46,6 +48,17 @@ public class JwtUtil {
                         .setSubject(username) // 사용자 식별자값(ID)
                         .claim(AUTHORIZATION_KEY, role) // 사용자 권한
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                        .setIssuedAt(date) // 발급일
+                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .compact();
+    }
+
+    public String createRefreshToken(){
+        Date date = new Date();
+
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setExpiration(new Date(date.getTime() + RefreshTOKEN_TIME)) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
