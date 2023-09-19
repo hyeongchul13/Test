@@ -27,7 +27,7 @@ public class PostController {
     private final PostService postService;
 
     // 전체 조회
-    @GetMapping("/post")
+    @GetMapping("/posts")
     public ResponseEntity<BaseResponse> findAllPosts() {
 
         List<PostResponseDto> postResponseDtos = postService.findAllPosts();
@@ -35,7 +35,7 @@ public class PostController {
     }
 
     // 단일 조회
-    @GetMapping("post/{id}")
+    @GetMapping("posts/{id}")
     public ResponseEntity<BaseResponse> findPostById(@PathVariable Long id) {
         PostResponseDto postResponseDto = postService.findPostById(id);
         return ResponseEntity.ok()
@@ -43,7 +43,7 @@ public class PostController {
     }
 
     // 생성
-    @PostMapping("/post")
+    @PostMapping("/posts")
     public ResponseEntity<BaseResponse> createPost(
             @RequestBody @Valid PostRequestDto postRequestDto,
             BindingResult bindingResult,
@@ -57,7 +57,7 @@ public class PostController {
     }
 
     // 수정
-    @PutMapping("post/{id}")
+    @PutMapping("posts/{id}")
     public ResponseEntity<BaseResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody @Valid PostRequestDto postRequestDto, BindingResult bindingResult,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -69,7 +69,7 @@ public class PostController {
     }
 
     // 삭제
-    @DeleteMapping("/{id}")
+    @DeleteMapping("posts/{id}")
     public ResponseEntity<BaseResponse> deletePost(@PathVariable Long id,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long deletedPostId = postService.deletePost(id, userDetails.getUser());
@@ -78,7 +78,7 @@ public class PostController {
     }
 
     // 게시글 좋아요
-    @PostMapping("post/{id}/likes")
+    @PostMapping("posts/{id}/likes")
     public ResponseEntity<BaseResponse> likePost(@PathVariable Long id,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String responseMessage = postService.likePostToggle(id, userDetails.getUser());

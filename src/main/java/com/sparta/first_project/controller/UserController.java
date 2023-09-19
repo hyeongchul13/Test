@@ -24,24 +24,24 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
 //    private final GoogleService googleService;
 
-    @GetMapping("/login-page")
+    @GetMapping("/login/page")
     public String loginPage() {
         return "login";
     }
 
-    @GetMapping("/sign-up")
+    @GetMapping("/signup")
     public String signupPage() {
-        return "sign-up";
+        return "signup";
     }
 
     // 회원가입
-    @PostMapping("/sign-up")
+    @PostMapping("/signup")
     public ResponseEntity<BaseResponse> signup(@RequestBody @Valid SignupRequestDto requestDto,
                                                BindingResult bindingResult) {
         // Validation 예외처리
@@ -51,6 +51,14 @@ public class UserController {
         }
         userService.signup(requestDto);
         return ResponseEntity.ok().body(new SuccessResponse("회원 가입 완료"));
+    }
+
+    // 회원 탈퇴
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<BaseResponse> withdraw(@RequestParam("id") Long id, @RequestParam("password") String password) {
+        userService.withdraw(id, password);
+        return ResponseEntity.ok()
+                .body(new SuccessResponse("회원 탈퇴 성공"));
     }
 
     // 프로필 수정

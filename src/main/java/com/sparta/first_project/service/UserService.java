@@ -2,17 +2,21 @@ package com.sparta.first_project.service;
 
 import com.sparta.first_project.dto.ProfileRequestDto;
 import com.sparta.first_project.dto.SignupRequestDto;
+import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
 import com.sparta.first_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +56,7 @@ public class UserService {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
                 throw new IllegalArgumentException("관리자 암호가 유효하지 않아 등록이 불가능합니다.");
             }
-            role = UserRoleEnum.ADMIN;
+            role = ADMIN;
         }
 
         // 사용자 등록
@@ -60,11 +64,27 @@ public class UserService {
                 .username(username)
                 .password(password)
                 .email(email)
-                .nickname(requestDto.getNickname())
                 .intro(requestDto.getIntro())
                 .role(role)
                 .build();
 
+        userRepository.save(user);
+    }
+
+    // 회원탈퇴
+    @Transactional
+    // 회원 탈퇴
+    public void withdraw(Long id, String password) {
+        // 요청한 회원이 존재하는지 확인
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        // 비밀번호가 일치하는지 확인
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 회원 탈퇴 처리
+        user.setDeleted(true);
         userRepository.save(user);
     }
 
@@ -98,5 +118,10 @@ public class UserService {
                     .build();
             userRepository.save(user);
         }
+    }
+    private User findUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> {
+            throw new IllegalArgumentException("해당 id가 존재하지 않습니다. Post ID: " + id);
+        });
     }
 }

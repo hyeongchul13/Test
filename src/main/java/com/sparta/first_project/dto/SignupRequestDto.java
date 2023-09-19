@@ -22,10 +22,6 @@ public class SignupRequestDto {
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$", message = "올바른 이메일 형식이 아닙니다.")
     private String email;
 
-    @NotBlank(message = "닉네임을 입력해 주세요.")
-    @Pattern(regexp = "^(?=.*[a-zA-Z0-9가-힣@#$%^&+=!]).*$", message = "올바른 닉네임 형식이 아닙니다.")
-    private String nickname;
-
     @NotBlank(message = "자기소개를 입력해 주세요.")
     @Pattern(regexp = "^(?=.*[a-zA-Z0-9가-힣@#$%^&+=!]).*$", message = "자기소개를 작성해주세요.")
     private String intro;

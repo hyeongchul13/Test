@@ -39,6 +39,8 @@ public class User {
 
     private Long googleId;
 
+    private boolean deleted;
+
     public void updateprofile(ProfileRequestDto profileRequestDto) {
         this.password = profileRequestDto.getPassword();
         this.email = profileRequestDto.getEmail();
@@ -59,4 +61,7 @@ public class User {
         return this;
     }
 
+    public void setDeleted(boolean b) {
+        this.deleted = deleted;
+    }
 }
