@@ -27,41 +27,18 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
-
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String intro;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    private Long googleId;
-
     private boolean deleted;
 
-    public void updateprofile(ProfileRequestDto profileRequestDto) {
-        this.password = profileRequestDto.getPassword();
-        this.email = profileRequestDto.getEmail();
-        this.nickname = profileRequestDto.getNickname();
-        this.intro = profileRequestDto.getIntro();
-    }
-
-    public User(String username, String password, String email, UserRoleEnum role, Long googleId) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-        this.googleId =googleId;
-    }
-
-    public User googleIdUpdate(Long googleId) {
-        this.googleId = googleId;
-        return this;
-    }
-
-    public void setDeleted(boolean b) {
-        this.deleted = deleted;
+    public void updateProfile(ProfileRequestDto requestDto) {
+        this.password = requestDto.getPassword();
+        this.email = requestDto.getEmail();
+        this.intro = requestDto.getIntro();
     }
 }

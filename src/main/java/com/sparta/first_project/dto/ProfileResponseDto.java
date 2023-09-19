@@ -14,13 +14,11 @@ public class ProfileResponseDto {
     private String username;
     private String password;
     private String email;
-    private String nickname;
     private String intro;
 
     public ProfileResponseDto(User user) {
         this.password = user.getPassword();
         this.email = user.getEmail();
-        this.nickname = user.getNickname();
         this.intro = user.getIntro();
     }
 }

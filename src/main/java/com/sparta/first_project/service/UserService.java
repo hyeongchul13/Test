@@ -2,19 +2,20 @@ package com.sparta.first_project.service;
 
 import com.sparta.first_project.dto.ProfileRequestDto;
 import com.sparta.first_project.dto.SignupRequestDto;
+import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
 import com.sparta.first_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
+import static com.sparta.first_project.entity.UserRoleEnum.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -59,58 +60,52 @@ public class UserService {
 
         // 사용자 등록
         User user = User.builder().username(username).password(password).email(email).intro(requestDto.getIntro()).role(role).build();
-
         userRepository.save(user);
     }
+    // 회원정보 조회
+    public User getProfile(String username) {
+        // 유효성 검사
+        if (username == null) {
+            throw new IllegalArgumentException("사용자 이름을 입력해 주세요.");
+        }
 
-    // 회원탈퇴
-    @Transactional
-    // 회원 탈퇴
-    public void withdraw(Long id, String password) {
-        // 요청한 회원이 존재하는지 확인
-        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        // 회원 정보 조회
+        return findByUsername(username);
+    }
 
-        // 비밀번호가 일치하는지 확인
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+    // 회원정보 수정
+    public void updateProfile(ProfileRequestDto requestDto) {
+        String username = requestDto.getUsername();
+        User user = findByUsername(username);
+
+        // 비밀번호 수정 여부 확인
+        if (!user.getPassword().equals(requestDto.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        // 회원 탈퇴 처리
-        user.setDeleted(true);
+        // 회원 정보 수정
+        user.updateProfile(requestDto);
+
+        // 회원 정보 저장
         userRepository.save(user);
     }
 
-    // 프로필 수정
-    @Transactional
-    public void updateProfile(ProfileRequestDto profileRequestDto, User user) {
-        // 비밀번호 인코딩
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-
-        user.updateprofile(profileRequestDto);
-        userRepository.save(user);
-    }
-
-    // 구글 로그인 구현
-    @Transactional
-    public void googleLogin(OAuth2User oAuth2User) {
-        // 구글 로그인 성공 시 사용자 정보를 가져옵니다.
-        String email = oAuth2User.getAttribute("email");
-        String username = oAuth2User.getAttribute("username");
-
-        // 사용자 중복 확인
-        Optional<User> checkUser = userRepository.findByEmail(email);
-        if (checkUser.isPresent()) {
-            // 기존 회원일 경우 로그인 처리합니다.
-        } else {
-            // 신규 회원일 경우 사용자를 등록합니다.
-            User user = User.builder().email(email).username(username).role(UserRoleEnum.USER).build();
-            userRepository.save(user);
+    // 회원 정보 삭제
+    public void delete(Long id, String password) {
+        User user = findById(id);
+        if (!user.getPassword().equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+        userRepository.delete(user);
     }
 
-    private User findUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> {
-            throw new IllegalArgumentException("해당 id가 존재하지 않습니다. Post ID: " + id);
-        });
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new IllegalArgumentException("해당 사용자 이름의 회원을 찾을 수 없습니다. 사용자 이름: " + username));
+    }
+
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("해당 ID의 회원을 찾을 수 없습니다. ID: " + id));
     }
 }

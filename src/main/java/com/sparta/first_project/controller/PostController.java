@@ -7,6 +7,8 @@ import com.sparta.first_project.dto.SuccessResponse;
 import com.sparta.first_project.error.ParameterValidationException;
 import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class PostController {
     @Operation(summary = "게시물 전체 조회",
             responses = {
             @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @GetMapping("/post")
+    @GetMapping("/posts")
     public ResponseEntity<BaseResponse> findAllPosts() {
 
         List<PostResponseDto> postResponseDtos = postService.findAllPosts();
@@ -41,7 +43,7 @@ public class PostController {
     @Operation(summary = "게시물 단일 조회",
             responses = {
             @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @GetMapping("post/{id}")
+    @GetMapping("posts/{id}")
     public ResponseEntity<BaseResponse> findPostById(@PathVariable Long id) {
         PostResponseDto postResponseDto = postService.findPostById(id);
         return ResponseEntity.ok()
@@ -52,7 +54,7 @@ public class PostController {
     @Operation(summary = "게시물 생성",
         responses = {
             @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @PostMapping("/post")
+    @PostMapping("/posts")
     public ResponseEntity<BaseResponse> createPost(
             @RequestBody @Valid PostRequestDto postRequestDto,
             BindingResult bindingResult,
@@ -69,7 +71,7 @@ public class PostController {
     @Operation(summary = "게시물 수정",
             responses = {
             @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @PutMapping("post/{id}")
+    @PutMapping("posts/{id}")
     public ResponseEntity<BaseResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody @Valid PostRequestDto postRequestDto, BindingResult bindingResult,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -96,7 +98,7 @@ public class PostController {
     @Operation(summary = "게시물 좋아요",
             responses = {
             @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @PostMapping("post/{id}/likes")
+    @PostMapping("posts/{id}/likes")
     public ResponseEntity<BaseResponse> likePost(@PathVariable Long id,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String responseMessage = postService.likePostToggle(id, userDetails.getUser());

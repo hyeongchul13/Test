@@ -108,7 +108,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
         http.formLogin((formLogin) ->
                 formLogin
-                        .loginPage("/api/user/login-page").permitAll()
+                        .loginPage("/api/users/login-page").permitAll()
         );
 
         // 필터 관리
