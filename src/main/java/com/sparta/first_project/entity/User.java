@@ -1,6 +1,5 @@
 package com.sparta.first_project.entity;
 
-import com.sparta.first_project.dto.ProfileRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,12 +34,6 @@ public class User {
     private UserRoleEnum role;
 
     private boolean deleted;
-
-    public void updateProfile(ProfileRequestDto requestDto) {
-        this.password = requestDto.getPassword();
-        this.email = requestDto.getEmail();
-        this.intro = requestDto.getIntro();
-    }
 
     public void setUsername(String username) {
         this.username = username;

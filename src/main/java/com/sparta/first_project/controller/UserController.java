@@ -82,13 +82,16 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<BaseResponse> delete(@PathVariable Long id, @RequestParam String password) {
-        User user = userService.findById(id);
-        if (!user.getPassword().equals(password)) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<BaseResponse> delete(@RequestParam String password,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        // 현재 로그인한 사용자의 정보를 가져옴
+        String username = userDetails.getUsername();
+        User user = userService.findByUsername(username);
+        // 입력한 비밀번호를 암호화하여 저장된 비밀번호와 비교
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        userService.delete(id, password);
+        userService.delete(password);
         return ResponseEntity.ok().body(new SuccessResponse("회원 탈퇴 성공"));
     }
 }

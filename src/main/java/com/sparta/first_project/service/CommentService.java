@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static com.sparta.first_project.entity.UserRoleEnum.*;
+import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 
 @Service
 @RequiredArgsConstructor

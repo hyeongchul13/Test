@@ -31,7 +31,7 @@ public class PostController {
     // 전체 조회
     @Operation(summary = "게시물 전체 조회",
             responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @GetMapping("/posts")
     public ResponseEntity<BaseResponse> findAllPosts() {
 
@@ -42,7 +42,7 @@ public class PostController {
     // 단일 조회
     @Operation(summary = "게시물 단일 조회",
             responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @GetMapping("posts/{id}")
     public ResponseEntity<BaseResponse> findPostById(@PathVariable Long id) {
         PostResponseDto postResponseDto = postService.findPostById(id);
@@ -52,8 +52,8 @@ public class PostController {
 
     // 생성
     @Operation(summary = "게시물 생성",
-        responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+            responses = {
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PostMapping("/posts")
     public ResponseEntity<BaseResponse> createPost(
             @RequestBody @Valid PostRequestDto postRequestDto,
@@ -70,7 +70,7 @@ public class PostController {
     // 수정
     @Operation(summary = "게시물 수정",
             responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PutMapping("posts/{id}")
     public ResponseEntity<BaseResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody @Valid PostRequestDto postRequestDto, BindingResult bindingResult,
@@ -85,7 +85,7 @@ public class PostController {
     // 삭제
     @Operation(summary = "게시물 삭제",
             responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deletePost(@PathVariable Long id,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -97,7 +97,7 @@ public class PostController {
     // 게시글 좋아요
     @Operation(summary = "게시물 좋아요",
             responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PostMapping("posts/{id}/likes")
     public ResponseEntity<BaseResponse> likePost(@PathVariable Long id,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {

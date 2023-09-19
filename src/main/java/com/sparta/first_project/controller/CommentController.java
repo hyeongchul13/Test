@@ -28,8 +28,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @Operation(summary = "댓글 생성",
-    responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+            responses = {
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @PostMapping("/{id}/comments")
     public ResponseEntity<BaseResponse> createComment(@PathVariable Long id,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
@@ -42,8 +42,8 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정",
-    responses = {
-            @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")}
+            responses = {
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")}
     )
     @PutMapping("/comments/{id}")
     public ResponseEntity<BaseResponse> updateComment(@PathVariable Long id,
@@ -58,7 +58,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 삭제"
-    ,responses = {
+            , responses = {
             @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<BaseResponse> deleteComment(@PathVariable Long id,

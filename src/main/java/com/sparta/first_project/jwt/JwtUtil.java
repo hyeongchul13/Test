@@ -53,7 +53,7 @@ public class JwtUtil {
                         .compact();
     }
 
-    public String createRefreshToken(){
+    public String createRefreshToken() {
         Date date = new Date();
 
         return BEARER_PREFIX +

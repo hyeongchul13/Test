@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
 
-
     @ExceptionHandler(ParameterValidationException.class)
     public ResponseEntity<ErrorResponse> parameterValidationExHandler(
             ParameterValidationException e) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> jwtExHandler(
