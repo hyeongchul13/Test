@@ -8,6 +8,7 @@ import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
 import com.sparta.first_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,22 +74,25 @@ public class UserService {
         return findByUsername(username);
     }
 
-    // 회원정보 수정
-    public void updateProfile(ProfileRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        User user = findByUsername(username);
-
-        // 비밀번호 수정 여부 확인
-        if (!user.getPassword().equals(requestDto.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-
-        // 회원 정보 수정
-        user.updateProfile(requestDto);
-
-        // 회원 정보 저장
-        userRepository.save(user);
-    }
+//    public void updateProfile(ProfileRequestDto requestDto) {
+//        String username = requestDto.getUsername();
+//        User user = findByUsername(username);
+//
+//        // 입력한 비밀번호를 BCryptPasswordEncoder를 사용하여 검사
+//        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+//            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+//        }
+//
+//        // 회원 정보 수정
+//        user.setUsername(requestDto.getUsername());
+//        user.setPassword(requestDto.getPassword());
+//        user.setEmail(requestDto.getEmail());
+//        user.setIntro(requestDto.getIntro());
+//
+//
+//        // 회원 정보 저장
+//        userRepository.save(user);
+//    }
 
     // 회원 정보 삭제
     public void delete(Long id, String password) {
@@ -107,5 +111,10 @@ public class UserService {
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("해당 ID의 회원을 찾을 수 없습니다. ID: " + id));
+    }
+
+    @Transactional
+    public void update(User user) {
+        userRepository.save(user);
     }
 }

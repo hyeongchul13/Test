@@ -25,4 +25,6 @@ public class ProfileRequestDto {
     @Pattern(regexp = "^(?=.*[a-zA-Z0-9가-힣@#$%^&+=!]).*$", message = "자기소개를 작성해주세요.")
     private String intro;
 
+    private String newPassword; // 새로운 비밀번호 필드 추가
+
 }
