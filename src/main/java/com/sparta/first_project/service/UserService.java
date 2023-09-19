@@ -1,19 +1,18 @@
 package com.sparta.first_project.service;
 
-import com.sparta.first_project.dto.*;
+import com.sparta.first_project.dto.ProfileRequestDto;
+import com.sparta.first_project.dto.SignupRequestDto;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
 import com.sparta.first_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
-import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
-
 
 @Service
 @RequiredArgsConstructor
@@ -72,8 +71,32 @@ public class UserService {
     // 프로필 수정
     @Transactional
     public void updateProfile(ProfileRequestDto profileRequestDto, User user) {
+        // 비밀번호 인코딩
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+
         user.updateprofile(profileRequestDto);
         userRepository.save(user);
     }
 
+    // 구글 로그인 구현
+    @Transactional
+    public void googleLogin(OAuth2User oAuth2User) {
+        // 구글 로그인 성공 시 사용자 정보를 가져옵니다.
+        String email = oAuth2User.getAttribute("email");
+        String username = oAuth2User.getAttribute("username");
+
+        // 사용자 중복 확인
+        Optional<User> checkUser = userRepository.findByEmail(email);
+        if (checkUser.isPresent()) {
+            // 기존 회원일 경우 로그인 처리합니다.
+        } else {
+            // 신규 회원일 경우 사용자를 등록합니다.
+            User user = User.builder()
+                    .email(email)
+                    .username(username)
+                    .role(UserRoleEnum.USER)
+                    .build();
+            userRepository.save(user);
+        }
+    }
 }

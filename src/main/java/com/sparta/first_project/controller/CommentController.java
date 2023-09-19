@@ -20,12 +20,12 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts")
+@RequestMapping("/api")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/{id}/comment")
+    @PostMapping("/comment/{id}")
     public ResponseEntity<BaseResponse> createComment(@PathVariable Long id,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {

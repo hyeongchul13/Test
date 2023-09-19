@@ -35,12 +35,12 @@ public class PostService {
         Post savedpost = postRepository.save(post);
         return new PostResponseDto(savedpost);
     }
-
+    // 전체조회
     public List<PostResponseDto> findAllPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc().stream().map(PostResponseDto::new)
                 .toList();
     }
-
+    // 단일 조회
     public PostResponseDto findPostById(Long id) {
         Post findPost = findPost(id);
         return new PostResponseDto(findPost);
