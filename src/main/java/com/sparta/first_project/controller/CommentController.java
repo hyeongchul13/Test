@@ -30,23 +30,23 @@ public class CommentController {
     @Operation(summary = "댓글 생성",
             responses = {
                     @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @PostMapping("/{id}/comments")
-    public ResponseEntity<BaseResponse> createComment(@PathVariable Long id,
+    @PostMapping("/{postid}/comments")
+    public ResponseEntity<BaseResponse> createComment(@PathVariable Long postid,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkParamValidation(bindingResult);
 
         return ResponseEntity.ok()
                 .body(new SuccessResponse("댓글 생성 성공",
-                        commentService.createComment(id, requestDto, userDetails.getUser())));
+                        commentService.createComment(postid, requestDto, userDetails.getUser())));
     }
 
     @Operation(summary = "댓글 수정",
             responses = {
                     @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")}
     )
-    @PutMapping("/comments/{id}")
-    public ResponseEntity<BaseResponse> updateComment(@PathVariable Long id,
+    @PutMapping("/comments/{commentid}")
+    public ResponseEntity<BaseResponse> updateComment(@PathVariable Long commentid,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal
                                                       UserDetailsImpl userDetails) {
@@ -54,19 +54,19 @@ public class CommentController {
 
         return ResponseEntity.ok()
                 .body(new SuccessResponse("댓글 수정 성공",
-                        commentService.updateComment(id, requestDto, userDetails.getUser())));
+                        commentService.updateComment(commentid, requestDto, userDetails.getUser())));
     }
 
     @Operation(summary = "댓글 삭제"
             , responses = {
             @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @DeleteMapping("/comments/{id}")
-    public ResponseEntity<BaseResponse> deleteComment(@PathVariable Long id,
+    @DeleteMapping("/comments/{commentid}")
+    public ResponseEntity<BaseResponse> deleteComment(@PathVariable Long commentid,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        commentService.deleteComment(id, userDetails.getUser());
+        commentService.deleteComment(commentid, userDetails.getUser());
 
         return ResponseEntity.ok()
-                .body(new SuccessResponse("댓글 삭제 성공 + Comment Id: " + id));
+                .body(new SuccessResponse("댓글 삭제 성공 + Comment Id: " + commentid));
     }
 
     private static void checkParamValidation(BindingResult bindingResult) {
