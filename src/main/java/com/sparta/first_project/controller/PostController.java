@@ -35,11 +35,11 @@ public class PostController {
     }
 
     // 단일 조회
-    @GetMapping("posts/{id}")
-    public ResponseEntity<BaseResponse> findPostById(@PathVariable Long id) {
-        PostResponseDto postResponseDto = postService.findPostById(id);
+    @GetMapping("posts/{postid}")
+    public ResponseEntity<BaseResponse> findPostById(@PathVariable Long postid) {
+        PostResponseDto postResponseDto = postService.findPostById(postid);
         return ResponseEntity.ok()
-                .body(new SuccessResponse("게시물 조회 성공 Post ID: " + id, postResponseDto));
+                .body(new SuccessResponse("게시물 조회 성공 Post ID: " + postid, postResponseDto));
     }
 
     // 생성
@@ -57,33 +57,33 @@ public class PostController {
     }
 
     // 수정
-    @PutMapping("posts/{id}")
-    public ResponseEntity<BaseResponse> updatePost(@PathVariable Long id,
+    @PutMapping("posts/{postid}")
+    public ResponseEntity<BaseResponse> updatePost(@PathVariable Long postid,
                                                    @RequestBody @Valid PostRequestDto postRequestDto, BindingResult bindingResult,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkParamValidation(bindingResult);
 
-        PostResponseDto postResponseDto = postService.updatePost(id, postRequestDto,
+        PostResponseDto postResponseDto = postService.updatePost(postid, postRequestDto,
                 userDetails.getUser());
         return ResponseEntity.ok().body(new SuccessResponse("게시물 수정 성공", postResponseDto));
     }
 
     // 삭제
-    @DeleteMapping("posts/{id}")
-    public ResponseEntity<BaseResponse> deletePost(@PathVariable Long id,
+    @DeleteMapping("posts/{postid}")
+    public ResponseEntity<BaseResponse> deletePost(@PathVariable Long postid,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long deletedPostId = postService.deletePost(id, userDetails.getUser());
+        Long deletedPostId = postService.deletePost(postid, userDetails.getUser());
         return ResponseEntity.ok()
                 .body(new SuccessResponse("게시물 삭제 성공 Post ID: " + deletedPostId));
     }
 
     // 게시글 좋아요
-    @PostMapping("posts/{id}/likes")
-    public ResponseEntity<BaseResponse> likePost(@PathVariable Long id,
+    @PostMapping("posts/{postid}/likes")
+    public ResponseEntity<BaseResponse> likePost(@PathVariable Long postid,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String responseMessage = postService.likePostToggle(id, userDetails.getUser());
+        String responseMessage = postService.likePostToggle(postid, userDetails.getUser());
         return ResponseEntity.ok().body(new SuccessResponse(
-                responseMessage + " 게시물 id: " + id + " 유저 id: " + userDetails.getUser().getId()));
+                responseMessage + " 게시물 id: " + postid + " 유저 id: " + userDetails.getUser().getId()));
     }
 
     private static void checkParamValidation(BindingResult bindingResult) {

@@ -25,19 +25,19 @@ public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/comment/{id}")
-    public ResponseEntity<BaseResponse> createComment(@PathVariable Long id,
+    @PostMapping("/comments/{postid}")
+    public ResponseEntity<BaseResponse> createComment(@PathVariable Long postid,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkParamValidation(bindingResult);
 
         return ResponseEntity.ok()
                 .body(new SuccessResponse("댓글 생성 성공",
-                        commentService.createComment(id, requestDto, userDetails.getUser())));
+                        commentService.createComment(postid, requestDto, userDetails.getUser())));
     }
 
-    @PutMapping("/comment/{id}")
-    public ResponseEntity<BaseResponse> updateComment(@PathVariable Long id,
+    @PutMapping("/comments/{postid}")
+    public ResponseEntity<BaseResponse> updateComment(@PathVariable Long postid,
                                                       @RequestBody @Valid CommentRequestDto requestDto, BindingResult bindingResult,
                                                       @AuthenticationPrincipal
                                                       UserDetailsImpl userDetails) {
@@ -45,16 +45,16 @@ public class CommentController {
 
         return ResponseEntity.ok()
                 .body(new SuccessResponse("댓글 수정 성공",
-                        commentService.updateComment(id, requestDto, userDetails.getUser())));
+                        commentService.updateComment(postid, requestDto, userDetails.getUser())));
     }
 
-    @DeleteMapping("/comment/{id}")
-    public ResponseEntity<BaseResponse> deleteComment(@PathVariable Long id,
+    @DeleteMapping("/comments/{postid}")
+    public ResponseEntity<BaseResponse> deleteComment(@PathVariable Long postid,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        commentService.deleteComment(id, userDetails.getUser());
+        commentService.deleteComment(postid, userDetails.getUser());
 
         return ResponseEntity.ok()
-                .body(new SuccessResponse("댓글 삭제 성공 + Comment Id: " + id));
+                .body(new SuccessResponse("댓글 삭제 성공 + Comment Id: " + postid));
     }
 
     private static void checkParamValidation(BindingResult bindingResult) {

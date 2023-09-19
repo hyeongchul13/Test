@@ -2,13 +2,11 @@ package com.sparta.first_project.service;
 
 import com.sparta.first_project.dto.ProfileRequestDto;
 import com.sparta.first_project.dto.SignupRequestDto;
-import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
 import com.sparta.first_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -60,13 +58,7 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = User.builder()
-                .username(username)
-                .password(password)
-                .email(email)
-                .intro(requestDto.getIntro())
-                .role(role)
-                .build();
+        User user = User.builder().username(username).password(password).email(email).intro(requestDto.getIntro()).role(role).build();
 
         userRepository.save(user);
     }
@@ -111,14 +103,11 @@ public class UserService {
             // 기존 회원일 경우 로그인 처리합니다.
         } else {
             // 신규 회원일 경우 사용자를 등록합니다.
-            User user = User.builder()
-                    .email(email)
-                    .username(username)
-                    .role(UserRoleEnum.USER)
-                    .build();
+            User user = User.builder().email(email).username(username).role(UserRoleEnum.USER).build();
             userRepository.save(user);
         }
     }
+
     private User findUser(Long id) {
         return userRepository.findById(id).orElseThrow(() -> {
             throw new IllegalArgumentException("해당 id가 존재하지 않습니다. Post ID: " + id);
