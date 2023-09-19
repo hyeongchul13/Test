@@ -86,7 +86,7 @@ public class PostController {
     @Operation(summary = "게시물 삭제",
             responses = {
                     @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
-    @DeleteMapping("/{postid}")
+    @DeleteMapping("posts/{postid}")
     public ResponseEntity<BaseResponse> deletePost(@PathVariable Long postid,
                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long deletedPostId = postService.deletePost(postid, userDetails.getUser());
