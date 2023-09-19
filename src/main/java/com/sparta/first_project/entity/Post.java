@@ -31,7 +31,7 @@ public class Post extends Timestamp {
     private String author;
 
     // 연관관계 주입
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")

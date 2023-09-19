@@ -12,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,6 +36,14 @@ public class UserController {
         userService.signup(requestDto);
         return ResponseEntity.ok().body(new SuccessResponse("회원 가입 완료"));
     }
+    @GetMapping("/login-page")
+    public String loginPage() {
+        return "login";
+    }
 
+    @GetMapping("/sign-up")
+    public String signupPage() {
+        return "sign-up";
+    }
 }
 
