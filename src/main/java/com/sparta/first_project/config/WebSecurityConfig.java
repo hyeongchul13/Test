@@ -5,7 +5,6 @@ import com.sparta.first_project.security.JwtAuthenticationFilter;
 import com.sparta.first_project.security.JwtAuthorizationFilter;
 import com.sparta.first_project.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -58,9 +57,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -94,22 +94,21 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         );
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
-                authorizeHttpRequests
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers(
-                                "/",// /로 시작하는 요청 모두 접근 허가
-                                "/v3/api-docs/**",//v3/api-docs/**로 시작하는 요청 모두 접근 허가
-                                "swagger-ui/**").permitAll()//swagger-ui.html 접근 허용 설정
-                        .requestMatchers("/api/users/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                        .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/comments").permitAll()
-                        .anyRequest().authenticated()
+                        authorizeHttpRequests
+//                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                                .requestMatchers(
+                                        "/",// /로 시작하는 요청 모두 접근 허가
+                                        "/v3/api-docs/**",//v3/api-docs/**로 시작하는 요청 모두 접근 허가
+                                        "swagger-ui/**").permitAll()//swagger-ui.html 접근 허용 설정
+                                .requestMatchers("/api/users/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
+                                .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
+                                .anyRequest().authenticated()
         );
 
-        http.formLogin((formLogin) ->
-                formLogin
-                        .loginPage("/api/users/login-page").permitAll()
-        );
+//        http.formLogin((formLogin) ->
+//                formLogin
+//                        .loginPage("/api/users/login-page").permitAll()
+//        );
 
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
