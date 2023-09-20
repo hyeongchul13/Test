@@ -31,9 +31,6 @@ public class Comment extends Timestamp {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToMany(mappedBy = "comment")
-    private List<Likes> likesList = new ArrayList<>();
-
     public Comment(CommentRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.username = requestDto.getUsername();

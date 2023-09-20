@@ -68,7 +68,6 @@ public class PostService {
         if (user.getRole().equals(ADMIN) || findPost.getAuthor().equals(user.getUsername())) {
             commentRepository.deleteAll(findPost.getCommentList());
             likesRepository.deleteAll(findPost.getLikesList());
-            likesRepository.deleteAll(findPost.getLikesList());
             postRepository.delete(findPost);
             return id;
         }
