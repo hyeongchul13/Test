@@ -104,12 +104,8 @@ public class PostService {
             throw new IllegalArgumentException("해당 id의 게시물이 존재하지 않습니다. Post ID: " + id);
         });
     }
-//    // 페이징
-//    public Page<Post> getPost(Pageable pageable) {
-//        return postRepository.findAll(pageable);
-//    }
-//
-//    public Page<Post> getPostComment(Pageable pageable) {//댓글순 정렬
-//       return postRepository.findAllByOrderByCommentCountDesc(pageable);
-//    }
+    // 페이징
+    public Page<Post> getPost(Pageable pageable) {
+        return postRepository.findAll(pageable);
+    }
 }
