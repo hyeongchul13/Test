@@ -1,7 +1,10 @@
 package com.sparta.first_project.security;
 
+import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
+import com.sparta.first_project.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,21 +27,37 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String tokenValue = jwtUtil.getJwtFromHeader(req);
+        String accessToken = jwtUtil.getJwtFromHeader(req,JwtUtil.AUTHORIZATION_HEADER);
+        String refreshToken = jwtUtil.getJwtFromHeader(req,JwtUtil.REFRESH_HEADER);
 
-        if (StringUtils.hasText(tokenValue)) {
+        if (StringUtils.hasText(accessToken)) {
 
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
-                return;
+            if (!jwtUtil.validateToken(accessToken)) {
+                String refresh = req.getHeader(JwtUtil.REFRESH_HEADER);
+                if (!jwtUtil.validateToken(refreshToken) || !refreshTokenRepository.existsByToken(refresh)){
+                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    log.info("Token이 만료 되었습니다.");
+                    throw new JwtException("Refresh Token Error");
+                }
+
+                log.info("Access Token reCreate");
+                Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
+                String username = info.getSubject();
+                UserRoleEnum role = UserRoleEnum.valueOf(String.valueOf(info.get("auth")));
+
+                accessToken = jwtUtil.createToken(username,role);
+                res.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+                accessToken = jwtUtil.substringToken(accessToken);
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            Claims info = jwtUtil.getUserInfoFromToken(accessToken);
 
+            log.info("Token Authorization");
             try {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {

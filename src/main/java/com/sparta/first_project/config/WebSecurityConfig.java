@@ -1,6 +1,7 @@
 package com.sparta.first_project.config;
 
 import com.sparta.first_project.jwt.JwtUtil;
+import com.sparta.first_project.repository.RefreshTokenRepository;
 import com.sparta.first_project.security.JwtAuthenticationFilter;
 import com.sparta.first_project.security.JwtAuthorizationFilter;
 import com.sparta.first_project.security.UserDetailsServiceImpl;
@@ -33,6 +34,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,7 +51,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP method
-                .allowedHeaders("Content-Type", "X-AUTH-TOKEN", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+                .allowedHeaders("Content-Type", "X-AUTH-TOKEN", "Authorization","Authorization_Refresh","Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
                 .allowCredentials(true) // 쿠키 인증 요청 허용
                 .maxAge(3000); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
     }
@@ -59,8 +61,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization","Authorization_Refresh", "Cache-Control", "Content-Type"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization","Authorization_Refresh"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -69,14 +71,14 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRepository);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, refreshTokenRepository);
     }
 
     @Bean

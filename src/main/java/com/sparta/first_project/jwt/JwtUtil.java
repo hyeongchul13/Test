@@ -19,6 +19,7 @@ import java.util.Date;
 public class JwtUtil {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String REFRESH_HEADER = "Authorization_Refresh";
     // 사용자 권한 값의 KEY
     public static final String AUTHORIZATION_KEY = "auth";
     // Token 식별자
@@ -53,11 +54,13 @@ public class JwtUtil {
                         .compact();
     }
 
-    public String createRefreshToken() {
+    public String createRefreshToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
+                        .setSubject(username) // 사용자 식별자값(ID)
+                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한
                         .setExpiration(new Date(date.getTime() + RefreshTOKEN_TIME)) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
@@ -65,13 +68,21 @@ public class JwtUtil {
     }
 
     // header 에서 JWT 가져오기
-    public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+    public String getJwtFromHeader(HttpServletRequest request, String token) {
+        String bearerToken = request.getHeader(token);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
         return null;
     }
+
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
+        }
+        throw new JwtException("토큰이 유효하지 않습니다.");
+    }
+
 
     // 토큰 검증
     public boolean validateToken(String token) {

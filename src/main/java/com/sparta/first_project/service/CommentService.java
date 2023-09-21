@@ -3,17 +3,13 @@ package com.sparta.first_project.service;
 import com.sparta.first_project.dto.CommentRequestDto;
 import com.sparta.first_project.dto.CommentResponseDto;
 import com.sparta.first_project.entity.Comment;
-import com.sparta.first_project.entity.Likes;
 import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.repository.CommentRepository;
-import com.sparta.first_project.repository.LikesRepository;
 import com.sparta.first_project.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 

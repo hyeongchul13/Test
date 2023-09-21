@@ -2,8 +2,10 @@ package com.sparta.first_project.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.first_project.dto.LoginRequestDto;
+import com.sparta.first_project.entity.RefreshToken;
 import com.sparta.first_project.entity.UserRoleEnum;
 import com.sparta.first_project.jwt.JwtUtil;
+import com.sparta.first_project.repository.RefreshTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,13 +21,16 @@ import java.io.PrintWriter;
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     //로그인
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
         this.jwtUtil = jwtUtil;
+        this.refreshTokenRepository = refreshTokenRepository;
         setFilterProcessesUrl("/api/users/login");
     }
 
+    // 로그인 토큰 생성
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
@@ -50,7 +55,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
         String token = jwtUtil.createToken(username, role);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        response.addHeader("Authorization", token);
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUsername(username).orElse(null);
+        String refresh = jwtUtil.createRefreshToken(username, role);
+        if (refreshToken == null){
+            refreshToken = new RefreshToken(refresh,username);
+        } else {
+            refreshToken.updateToken(refresh);
+        }
+
+        refreshTokenRepository.save(refreshToken);
+        response.addHeader(JwtUtil.REFRESH_HEADER, refreshToken.getToken());
 
         // 로그인 성공시 "로그인 성공" 메시지를 반환
         response.setStatus(HttpServletResponse.SC_OK);
