@@ -33,7 +33,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    private boolean deleted;
+    private Long kakaoId;
 
     public void setUsername(String username) {
         this.username = username;
@@ -49,5 +49,25 @@ public class User {
 
     public void setIntro(String intro) {
         this.intro = intro;
+    }
+
+    public User(String username, String password, String email, UserRoleEnum role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
+
+    public User(String username, String password, String email, UserRoleEnum role, Long kakaoId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.kakaoId = kakaoId;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }

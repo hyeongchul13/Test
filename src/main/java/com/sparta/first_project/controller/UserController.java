@@ -1,11 +1,16 @@
 package com.sparta.first_project.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.first_project.dto.*;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.error.ParameterValidationException;
+import com.sparta.first_project.jwt.JwtUtil;
 import com.sparta.first_project.security.UserDetailsImpl;
+import com.sparta.first_project.service.KakaoService;
 import com.sparta.first_project.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +32,8 @@ public class UserController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final KakaoService kakaoService;
+//    private final GoogleService googleService;
 
     @Operation(hidden = true)//swagger에서 보이지 않게 설정
     // 회원 가입
@@ -94,4 +101,27 @@ public class UserController {
         userService.delete(password);
         return ResponseEntity.ok().body(new SuccessResponse("회원 탈퇴 성공"));
     }
+    // 카카오 로그인
+    @GetMapping("/kakao/callback")
+    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        String token = kakaoService.kakaoLogin(code);
+
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/";
+    }
+
+//    // 구글 로그인
+//    @GetMapping("/user/google/callback")
+//    public String googleLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+//        String token = googleService.googleLogin(code);
+//
+//        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
+//
+//        return "redirect:/";
+//    }
 }
