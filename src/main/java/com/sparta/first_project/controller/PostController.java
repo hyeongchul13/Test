@@ -56,6 +56,18 @@ public class PostController {
         return postService.getPost(pageable);
     }
 
+    // 게시글 전체 조회 - 페이징 - 댓글순
+    @Operation(summary = "게시글 전체 조회",
+            responses = {
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+    @JsonInclude(JsonInclude.Include.NON_NULL)//null값은 포함하지 않음
+    @GetMapping("/postComment")
+    public Page<Post> getPostComment(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.getPostComment(pageable);
+    }
+
+
+
     // 단일 조회
     @Operation(summary = "게시물 단일 조회",
             responses = {
