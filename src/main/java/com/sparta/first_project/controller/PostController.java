@@ -1,9 +1,11 @@
 package com.sparta.first_project.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.first_project.dto.BaseResponse;
 import com.sparta.first_project.dto.PostRequestDto;
 import com.sparta.first_project.dto.PostResponseDto;
 import com.sparta.first_project.dto.SuccessResponse;
+import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.error.ParameterValidationException;
 import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.PostService;
@@ -12,6 +14,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -37,6 +43,17 @@ public class PostController {
 
         List<PostResponseDto> postResponseDtos = postService.findAllPosts();
         return ResponseEntity.ok().body(new SuccessResponse("전체 게시물 조회 성공", postResponseDtos));
+    }
+
+
+    // 게시글 전체 조회 - 페이징 - 최신순
+    @Operation(summary = "게시글 전체 조회",
+            responses = {
+                    @ApiResponse(description = "성공", responseCode = "200"), @ApiResponse(description = "실패", responseCode = "400")})
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @GetMapping("/post")
+    public Page<Post> getPost(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return postService.getPost(pageable);
     }
 
     // 단일 조회

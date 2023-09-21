@@ -9,6 +9,9 @@ import com.sparta.first_project.repository.CommentRepository;
 import com.sparta.first_project.repository.LikesRepository;
 import com.sparta.first_project.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +39,13 @@ public class PostService {
         return new PostResponseDto(savedpost);
     }
 
-    // 전체조회
+
     public List<PostResponseDto> findAllPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc().stream().map(PostResponseDto::new)
                 .toList();
     }
+
+
 
     // 단일 조회
     public PostResponseDto findPostById(Long id) {
@@ -99,5 +104,10 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(() -> {
             throw new IllegalArgumentException("해당 id의 게시물이 존재하지 않습니다. Post ID: " + id);
         });
+    }
+    // 페이징
+    public Page<Post> getPost(Pageable pageable) {
+        //return postRepository.findAllByOrderByModifiedAtDesc(Pageable.ofSize(5));
+        return postRepository.findAll(pageable);
     }
 }
