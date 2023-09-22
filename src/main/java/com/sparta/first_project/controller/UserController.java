@@ -105,10 +105,7 @@ public class UserController {
     @GetMapping("/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
-
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER,token);
 
         return "redirect:/";
     }

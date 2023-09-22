@@ -108,8 +108,4 @@ public class PostService {
     public Page<Post> getPost(Pageable pageable) {
         return postRepository.findAll(pageable);
     }
-
-    public Page<Post> getPostComment(Pageable pageable) {//댓글순 정렬
-       return postRepository.findAllByOrderByCommentCountDesc(pageable);
-    }
 }
