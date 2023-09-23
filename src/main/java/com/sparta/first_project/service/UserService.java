@@ -19,7 +19,6 @@ import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
@@ -30,7 +29,6 @@ public class UserService {
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     // 회원가입
-    @Transactional
     public void signup(SignupRequestDto requestDto) {
 
         String username = requestDto.getUsername();
@@ -63,6 +61,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     // 회원정보 조회
     public User getProfile(String username) {
         // 유효성 검사

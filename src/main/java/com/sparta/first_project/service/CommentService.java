@@ -15,13 +15,11 @@ import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    @Transactional
     public CommentResponseDto createComment(Long postId, CommentRequestDto requestDto, User user) {
         Post findPost = postRepository.findById(postId).orElseThrow(
                 () -> {
