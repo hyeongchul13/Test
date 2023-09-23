@@ -1,5 +1,6 @@
 package com.sparta.first_project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.first_project.dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +8,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
+
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
 @AllArgsConstructor
@@ -32,10 +33,13 @@ public class Post extends Timestamp {
 
     // 연관관계 주입
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @JsonIgnore//무한참조 방지
     private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
+    @JsonIgnore//무한참조 방지
     private List<Likes> likesList = new ArrayList<>();
+
 
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
