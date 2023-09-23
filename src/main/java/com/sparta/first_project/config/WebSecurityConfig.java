@@ -103,7 +103,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                         "/v3/api-docs/**",//v3/api-docs/**로 시작하는 요청 모두 접근 허가
                                         "swagger-ui/**").permitAll()//swagger-ui.html 접근 허용 설정
                                 .requestMatchers("/api/users/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                                .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()//GET /api/posts/**로 시작하는 요청 모두 접근 허가
                                 .anyRequest().authenticated()
         );
 
