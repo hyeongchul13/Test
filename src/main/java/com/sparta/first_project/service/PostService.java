@@ -11,7 +11,6 @@ import com.sparta.first_project.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +22,12 @@ import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class PostService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final LikesRepository likesRepository;
 
-    @Transactional
     public PostResponseDto createPost(PostRequestDto postRequestDto, User user) {
         // DB 저장
         postRequestDto.addAuthor(user.getUsername());
@@ -39,15 +36,14 @@ public class PostService {
         return new PostResponseDto(savedpost);
     }
 
-
+    @Transactional(readOnly = true)
     public List<PostResponseDto> findAllPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc().stream().map(PostResponseDto::new)
                 .toList();
     }
 
-
-
     // 단일 조회
+    @Transactional(readOnly = true)
     public PostResponseDto findPostById(Long id) {
         Post findPost = findPost(id);
         return new PostResponseDto(findPost);
@@ -104,6 +100,7 @@ public class PostService {
             throw new IllegalArgumentException("해당 id의 게시물이 존재하지 않습니다. Post ID: " + id);
         });
     }
+
     // 페이징
     public Page<Post> getPost(Pageable pageable) {
         return postRepository.findAll(pageable);

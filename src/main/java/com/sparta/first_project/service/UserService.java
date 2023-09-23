@@ -3,7 +3,6 @@ package com.sparta.first_project.service;
 import com.sparta.first_project.dto.SignupRequestDto;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
-import com.sparta.first_project.jwt.JwtUtil;
 import com.sparta.first_project.repository.UserRepository;
 import com.sparta.first_project.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -19,18 +18,15 @@ import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
     // 관리자 인증 토큰
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     // 회원가입
-    @Transactional
     public void signup(SignupRequestDto requestDto) {
 
         String username = requestDto.getUsername();
@@ -64,6 +60,7 @@ public class UserService {
     }
 
     // 회원정보 조회
+    @Transactional(readOnly = true)
     public User getProfile(String username) {
         // 유효성 검사
         if (username == null) {

@@ -9,7 +9,6 @@ import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.KakaoService;
 import com.sparta.first_project.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +89,7 @@ public class UserController {
 
     // 회원 탈퇴
     @DeleteMapping("/delete")
-    public ResponseEntity<BaseResponse> delete(@RequestParam String password,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<BaseResponse> delete(@RequestParam String password, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 현재 로그인한 사용자의 정보를 가져옴
         String username = userDetails.getUsername();
         User user = userService.findByUsername(username);
@@ -101,13 +100,22 @@ public class UserController {
         userService.delete(password);
         return ResponseEntity.ok().body(new SuccessResponse("회원 탈퇴 성공"));
     }
+
     // 카카오 로그인
     @GetMapping("/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER,token);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
         return "redirect:/";
+    }
+
+    // 회원 관련 정보 받기
+    @GetMapping("/user-info")
+    @ResponseBody
+    public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String username = userDetails.getUser().getUsername();
+        return new UserInfoDto(username);
     }
 
 //    // 구글 로그인
