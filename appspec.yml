@@ -4,10 +4,13 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/app
+    overwrite: yes
+
 permissions:
   - object: /home/ubuntu/app/
     owner: ubuntu
     group: ubuntu
+
 hooks:
   ApplicationStart:
     - location: deploy.sh
