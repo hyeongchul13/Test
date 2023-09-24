@@ -1,8 +1,10 @@
 package com.sparta.first_project.service;
 
 import com.sparta.first_project.dto.SignupRequestDto;
+import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
+import com.sparta.first_project.repository.PostRepository;
 import com.sparta.first_project.repository.UserRepository;
 import com.sparta.first_project.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
@@ -21,7 +24,9 @@ import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PostService postService;
 
     // 관리자 인증 토큰
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
@@ -87,6 +92,9 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
+        List<Post> userPosts = postRepository.findByAuthor(user.getUsername());
+
+        postRepository.deleteAll(userPosts);
         userRepository.delete(user);
     }
 
