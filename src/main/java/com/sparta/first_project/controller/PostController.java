@@ -111,7 +111,7 @@ public class PostController {
         return ResponseEntity.ok()
                 .body(new SuccessResponse("게시물 삭제 성공 Post ID: " + deletedPostId));
     }
-//TEST 되라 제발
+//TEST 되라 제발 왜 배포 자동으로 안하고 서버 안돌려,,,
     // 게시글 좋아요
     @Operation(summary = "게시물 좋아요",
             responses = {
