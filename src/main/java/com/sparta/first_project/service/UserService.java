@@ -1,17 +1,17 @@
 package com.sparta.first_project.service;
 
 import com.sparta.first_project.dto.SignupRequestDto;
+import com.sparta.first_project.entity.Post;
 import com.sparta.first_project.entity.User;
 import com.sparta.first_project.entity.UserRoleEnum;
+import com.sparta.first_project.repository.PostRepository;
 import com.sparta.first_project.repository.UserRepository;
-import com.sparta.first_project.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.sparta.first_project.entity.UserRoleEnum.ADMIN;
@@ -22,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PostRepository postRepository;
 
     // 관리자 인증 토큰
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
@@ -59,7 +60,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional(readOnly = true)
     // 회원정보 조회
     @Transactional(readOnly = true)
     public User getProfile(String username) {
@@ -90,22 +90,15 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
+        List<Post> userPosts = postRepository.findByAuthor(user.getUsername());
+
+        postRepository.deleteAll(userPosts);
+
         userRepository.delete(user);
     }
-
-    // 회원탈퇴
-
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() ->
                 new IllegalArgumentException("해당 사용자 이름의 회원을 찾을 수 없습니다. 사용자 이름: " + username));
-    }
-
-    private User getCurrentAuthenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("인증된 사용자 정보를 가져올 수 없습니다.");
-        }
-        return ((UserDetailsImpl) authentication.getPrincipal()).getUser();
     }
 }
