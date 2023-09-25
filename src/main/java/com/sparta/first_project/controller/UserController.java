@@ -9,7 +9,6 @@ import com.sparta.first_project.security.UserDetailsImpl;
 import com.sparta.first_project.service.KakaoService;
 import com.sparta.first_project.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -89,36 +88,51 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @DeleteMapping("/delete")
-    public ResponseEntity<BaseResponse> delete(@RequestParam String password,@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @DeleteMapping("{id}/delete")
+    public ResponseEntity<BaseResponse> delete(
+            @PathVariable Long id,
+            @RequestParam String password,
+            @RequestParam String confirmPassword,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         // 현재 로그인한 사용자의 정보를 가져옴
         String username = userDetails.getUsername();
-        User user = userService.findByUsername(username);
-        // 입력한 비밀번호를 암호화하여 저장된 비밀번호와 비교
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        User currentUser = userService.findByUsername(username);
+
+        // 현재 로그인한 사용자의 ID와 삭제하려는 사용자의 ID를 비교하여 권한 확인
+        if (!currentUser.getId().equals(id)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
+
+        // 비밀번호와 확인 비밀번호를 비교하여 일치하는지 확인
+        if (!password.equals(confirmPassword)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        userService.delete(password);
+
+        // 입력한 비밀번호와 현재 사용자의 비밀번호를 비교하여 일치하는지 확인
+        if (!passwordEncoder.matches(password, currentUser.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        userService.delete(id, password);
         return ResponseEntity.ok().body(new SuccessResponse("회원 탈퇴 성공"));
     }
+
     // 카카오 로그인
     @GetMapping("/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         String token = kakaoService.kakaoLogin(code);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER,token);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
         return "redirect:/";
     }
 
-//    // 구글 로그인
-//    @GetMapping("/user/google/callback")
-//    public String googleLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-//        String token = googleService.googleLogin(code);
-//
-//        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
-//        cookie.setPath("/");
-//        response.addCookie(cookie);
-//
-//        return "redirect:/";
-//    }
+    // 회원 관련 정보 받기
+    @GetMapping("/user-info")
+    @ResponseBody
+    public UserInfoDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String username = userDetails.getUser().getUsername();
+        return new UserInfoDto(username);
+    }
+
 }
