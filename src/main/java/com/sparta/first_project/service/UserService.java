@@ -59,6 +59,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     // 회원정보 조회
     @Transactional(readOnly = true)
     public User getProfile(String username) {
@@ -79,8 +80,10 @@ public class UserService {
 
     // 회원탈퇴
     @Transactional
-    public void delete(String password) {
-        User user = getCurrentAuthenticatedUser();
+    public void delete(Long id, String password) {
+        // 사용자를 ID로 검색
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         // 입력한 비밀번호를 암호화하여 저장된 비밀번호와 비교
         if (!passwordEncoder.matches(password, user.getPassword())) {
@@ -89,6 +92,9 @@ public class UserService {
 
         userRepository.delete(user);
     }
+
+    // 회원탈퇴
+
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() ->
