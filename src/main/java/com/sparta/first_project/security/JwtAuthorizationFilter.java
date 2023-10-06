@@ -54,6 +54,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 res.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
                 accessToken = jwtUtil.substringToken(accessToken);
             }
+            //33
 
             Claims info = jwtUtil.getUserInfoFromToken(accessToken);
 
